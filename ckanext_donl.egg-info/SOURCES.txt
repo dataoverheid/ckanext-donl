@@ -1,0 +1,13 @@
+setup.py
+ckanext/__init__.py
+ckanext/donl/__init__.py
+ckanext/donl/plugin.py
+ckanext/donl/model/__init__.py
+ckanext/donl/model/ipm_plugin.py
+ckanext_donl.egg-info/PKG-INFO
+ckanext_donl.egg-info/SOURCES.txt
+ckanext_donl.egg-info/dependency_links.txt
+ckanext_donl.egg-info/entry_points.txt
+ckanext_donl.egg-info/namespace_packages.txt
+ckanext_donl.egg-info/not-zip-safe
+ckanext_donl.egg-info/top_level.txt

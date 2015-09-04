@@ -1,0 +1,15 @@
+{% extends "group/edit_base.html" %}
+
+{% block page_primary_action %}{% endblock %}
+
+{% block breadcrumb_content %}
+  <span class="easy-breadcrumb_segment">{{ h.nav_link(_('Groups'), controller='group', action='index') }}</span>
+  <h1>{{ _('Add a Group') }}</li>
+{% endblock %}
+
+{% block primary_content_inner %}
+  <h1 class="{% block page_heading_class %}page-heading{% endblock %}">{% block page_heading %}{{ _('Group Form') }}{% endblock %}</h1>
+  {% block form %}
+    {{ c.form | safe }}
+  {% endblock %}
+{% endblock %}

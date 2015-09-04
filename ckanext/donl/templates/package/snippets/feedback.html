@@ -1,0 +1,5 @@
+{% if pkg %}  
+  <h2>Opmerking over deze dataset?</h2>
+
+  <a href="/feedback_dataset/aanmaken?link_dataset={{pkg.id}}&titel_dataset={{pkg.title or pkg.name}}&data_eigenaar={{h.donl_sel_to_dict(h.donl_owms_taxonomie_overheidsorganisatie())[pkg.maintainer]}}">Geef feedback aan de data-eigenaar</a>
+{% endif %}

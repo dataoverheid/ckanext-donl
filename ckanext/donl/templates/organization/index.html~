@@ -1,0 +1,84 @@
+{% extends "page.html" %}
+
+{% block subtitle %}{{ _('Organizations') }}{% endblock %}
+
+{% block bodyclass %}organisaties{% endblock %}
+
+{% block breadcrumb_content %}
+  <a href="/data/dataset">Datasets</a>
+{% endblock %}
+
+{% block header_title %}
+  Data per organisatie
+{% endblock %}
+
+{% block page_primary_action %}
+  {% if h.check_access('sysadmin') and h.check_access('organization_create') %}
+    {% link_for _('Add Organization'), controller='organization', action='new', class_='btn btn-primary', icon='plus-sign-alt' %}
+  {% endif %}
+{% endblock %}
+
+{% block primary_content %}
+  <h1>{{ _('Organizations') }}</h1>
+  {{ super() }}
+{% endblock %}
+
+{% block primary_content_inner %}
+
+  {% block maintainer_search_form %}
+    {% snippet 'organization/snippets/maintainer_search_form.html', placeholder=_('Search organizations...') %}
+  {% endblock %}
+
+  {% set mwds = h.donl_maintainers_with_datasets() %}
+  {% if mwds %}
+  	{% set odict = h.donl_sel_to_dict(h.donl_owms_taxonomie_overheidsorganisatie()) %}
+  	<ul style="margin-top:20px;" id="maintainer_list">
+	  {% for mwd in mwds %}
+	  	<li>
+			{% set maintainer_displayname = odict[mwd.maintainer] %}
+	  	{% if (maintainer_displayname) %}
+	  		{{ h.link_to(maintainer_displayname, h.url_for(controller='package', action='search', maintainer_displayname=maintainer_displayname)) }}
+	  	{% else %}
+	  		{{ h.link_to(mwd.maintainer, h.url_for(controller='package', action='search', maintainer=mwd.maintainer)) }}
+	  	{% endif %}
+	  	({{ mwd.number_of_datasets }} datasets)
+	  	</li>
+	  {% endfor %}
+		</ul>
+	{% endif %}
+
+
+  {#
+  {% block organizations_search_form %}
+    {% snippet 'snippets/search_form.html', type='organization', query=c.q, sorting_selected=c.sort_by_selected, count=c.page.item_count, placeholder=_('Search organizations...'), show_empty=request.params, no_bottom_border=true if c.page.items %}
+  {% endblock %}
+  #}
+
+  {% block organizations_list %}
+	  <h2>{{ _('Catalogushouders') }}</h2>
+    {% if c.page.items or request.params %}
+      {% if c.page.items %}
+        {% snippet "organization/snippets/organization_list.html", organizations=c.page.items %}
+      {% endif %}
+    {% else %}
+      <p class="empty">
+        {{ _('There are currently no organizations for this site') }}.
+        {% if h.check_access('organization_create') %}
+          {% link_for _('How about creating one?'), controller='organization', action='new' %}</a>.
+        {% endif %}
+      </p>
+    {% endif %}
+  {% endblock %}
+  {% block page_pagination %}
+    {{ c.page.pager() }}
+  {% endblock %}
+
+  
+
+{% endblock %}
+
+{% block page_header %}{% endblock %}
+
+{% block secondary_content %}
+  {% snippet "organization/snippets/helper.html" %}
+{% endblock %}

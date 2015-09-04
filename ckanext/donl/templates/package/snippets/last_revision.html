@@ -1,0 +1,6 @@
+{% if pkg %} 
+  {% if pkg.modified %} 
+    <h2>Dataset:</h2>
+    <div>Laatste wijziging: {{ pkg.modified }}</div>
+  {% endif %}
+{% endif %}

@@ -1,0 +1,11 @@
+{% if pkg %}  
+  <h2>{{ _('Data-eigenaar') }}:</h2>
+  <div class="information-icon">
+		{% set maintainer_displayname = h.donl_sel_to_dict(h.donl_owms_taxonomie_overheidsorganisatie())[pkg.maintainer] %}
+  	{% if (maintainer_displayname) %}
+  		{{ h.link_to(maintainer_displayname, h.url_for(controller='package', action='search', maintainer_displayname=maintainer_displayname)) }}
+  	{% else %}
+  		{{ h.link_to(pkg.maintainer, h.url_for(controller='package', action='search', maintainer=pkg.maintainer)) }}
+  	{% endif %}
+  </div>
+{% endif %}

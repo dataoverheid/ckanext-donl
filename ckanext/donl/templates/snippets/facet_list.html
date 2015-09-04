@@ -1,0 +1,59 @@
+{% set hide_empty = hide_empty or false %}
+{% with items = items or h.get_facet_items_dict(name) %}
+  {% if items or not hide_empty %}
+    {% if within_tertiary %}
+      {% set nav_class = 'nav nav-pills nav-stacked' %}
+      {% set nav_item_class = ' ' %}
+      {% set wrapper_class = 'nav-facet nav-facet-tertiary' %}
+    {% endif %}
+
+    {% if items %}
+      <h2>
+        {% set title = title or h.get_facet_title(name) %}
+        {{ title }}
+      </h2>
+    
+      <div>
+          {% for item in items if item.active %}
+            {% if loop.first %}
+        <ul class="facet_selected">
+            {% endif %}
+            {% set href = h.remove_url_param(name, item.name, extras=extras, alternative_url=alternative_url) if item.active else h.add_url_param(new_params={name: item.name}, extras=extras, alternative_url=alternative_url) %}
+            {% set label = h.donl_facet_value_displayname(item, name) %}
+            {% set label_truncated = h.truncate(label, 30) if not label_function else label %}
+              <li>
+                {{ label_truncated }}
+                <a href="{{ href }}" title="Verwijder filter">
+                  Verwijder
+                </a>
+                </li>
+            {% if loop.last %}
+        </ul>
+            {% endif %}
+          {% endfor %}
+      
+        <ul class="facet_unselected">
+          {% for item in items if not item.active %}
+            {% set href = h.remove_url_param(name, item.name, extras=extras, alternative_url=alternative_url) if item.active else h.add_url_param(new_params={name: item.name}, extras=extras, alternative_url=alternative_url) %}
+            {% set label = h.donl_facet_value_displayname(item, name) %}
+            {% set label_truncated = h.truncate(label, 30) if not label_function else label %}
+            {% set count = count_label(item['count']) if count_label else ('%d' % item['count']) %}
+              <li>
+                <a href="{{ href }}">{{ label_truncated }}</a>
+                <span>{{ count }}</span>
+              </li>
+          {% endfor %}
+
+          {% if items|length >= h.get_param_int('_%s_limit' % name)%}        
+            {% if h.get_param_int('_%s_limit' % name) %}
+              <li><a href="{{ h.remove_url_param('_%s_limit' % name, replace=0, extras=extras, alternative_url=alternative_url) }}" class="more_link">Meer...</a></li>
+            {% else %}
+              <li><a href="{{ h.remove_url_param('_%s_limit' % name, extras=extras, alternative_url=alternative_url) }}" class="more_link">Minder...</a></li>
+            {% endif %}
+          {% endif %}
+        </ul>        
+      </div>
+    {% endif %}
+      
+  {% endif %}
+{% endwith %}

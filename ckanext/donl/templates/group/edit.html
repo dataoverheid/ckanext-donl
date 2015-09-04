@@ -1,0 +1,12 @@
+{% extends "group/base_form_page.html" %}
+
+{% block breadcrumb_content %}
+  <li>{% link_for _('Groups'), controller='group', action='index' %}</li>
+  {% block breadcrumb_content_inner %}
+    <span class="easy-breadcrumb_segment">{% link_for group.display_name, controller='group', action='read', id=group.name %}</span>
+    <h1>{{ _('Manage') }}</h1>
+  {% endblock %}
+{% endblock %}
+
+{% block page_heading_class %}hide-heading{% endblock %}
+{% block page_heading %}{{ _('Edit Group') }}{% endblock %}

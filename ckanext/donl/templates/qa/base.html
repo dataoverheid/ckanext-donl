@@ -1,0 +1,26 @@
+{% extends "page.html" %}
+
+{% block subtitle %}{{ _('Quality Assurance') }}{% endblock %}
+
+{% block bodyclass %}kwaliteit{% endblock %}
+
+{% block breadcrumb_content %}
+  <a href="/data/dataset">Datasets</a>
+{% endblock %}
+
+{% block header_title %}
+  Kwaliteit
+{% endblock %}
+
+{% block primary %}
+  <article class="module">
+    <div class="module-content">
+      <div class="qa-content">
+        {% block primary_content %}
+        {% endblock %}
+      </div>
+    </div>
+  </article>
+{% endblock %}
+
+{% block secondary %}{% endblock %}

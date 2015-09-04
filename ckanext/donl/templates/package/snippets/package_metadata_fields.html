@@ -1,0 +1,32 @@
+{% import 'macros/form.html' as form %}
+
+<h2>{{ _('Context') }}</h2>
+
+{{ form.input('md_uri', label=_('Metadata URI'), id='field-md_uri', placeholder=_('http://example.com/dataset.json'), value=data.md_uri, error=errors.md_uri, classes=['control-full', 'control-large']) }}
+
+{{ form.input('spatial', label=_('Locatie'), placeholder=_('vb. Nederland'), id='field-spatial', value=data.spatial, error=errors.spatial, classes=['control-full', 'control-large']) }}
+
+{{ form.input('temporal_from', label=_('Periode van'), placeholder=_('vb. 1 januari 2014'), id='field-temporal_from', value=data.temporal_from, error=errors.temporal_from, classes=['control-full', 'control-large'], type='date') }}
+{{ form.input('temporal_to', label=_('Periode tot'), placeholder=_('vb. 31 december 2014'), id='field-temporal_to', value=data.temporal_to, error=errors.temporal_to, classes=['control-full', 'control-large'], type='date') }}
+
+{{ form.select('accrual_periodicity', label=_('Wijzigingsfrequentie'), id='field-accrual_periodicity', selected=data.accrual_periodicity, error=errors.accrual_periodicity, classes=['control-select'], options=h.donl_owms_frequentie()) }}
+
+
+<h2>{{ _('Wettelijke grondslag data') }}</h2>
+
+{{ form.input('grondslag', label=_('Grondslag'), placeholder=_('vb. http://wetten.overheid.nl/BWBR0123456/'), id='field-grondslag', value=data.grondslag, error=errors.grondslag, classes=['control-full', 'control-large']) }}
+
+{{ form.input('grondslag_citeertitel', label=_('Citeertitel'), placeholder=_('vb. Besluit Geodata Water'), id='field-grondslag_citeertitel', value=data.grondslag_citeertitel, error=errors.grondslag_citeertitel, classes=['control-full', 'control-large']) }}
+
+
+<h2>{{ _('Datakwaliteit') }}</h2>
+
+{{ form.select('lod_stars', label=_('Linked data sterren'), id='field-lod_stars', selected=data.lod_stars, error=errors.lod_stars, classes=['control-full', 'control-large'], options=h.donl_lod_stars()) }}
+
+{{ form.input('conforms_to', label=_('Gebruikte standaarden'), placeholder=_('vb. JuriConnect'), id='field-conforms_to', value=data.conforms_to, error=errors.conforms_to, classes=['control-full', 'control-large']) }}
+
+
+<h2>{{ _('Rechten') }}</h2>
+
+{{ form.input('rights', label=_('Van toepassing zijnde rechten'), id='field-rights', placeholder=_('vb. CC-BY bronvermelding'), value=data.rights, error=errors.rights, classes=['control-full', 'control-large']) }}
+

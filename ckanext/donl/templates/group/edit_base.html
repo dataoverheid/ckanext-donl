@@ -1,0 +1,26 @@
+{% extends "page.html" %}
+
+{% block subtitle %}{{ _('Manage') }} - {{ c.group_dict.display_name }} - {{ _('Groups') }}{% endblock %}
+
+{% set group = c.group_dict %}
+
+{% block breadcrumb_content %}
+  <li>{% link_for _('Groups'), controller='group', action='index' %}</li>
+  {% block breadcrumb_content_inner %}
+    <span class="easy-breadcrumb_segment">{% link_for group.display_name, controller='group', action='read', id=group.name %}</span>
+    <h1>{{ _('Manage') }}</h1>
+  {% endblock %}
+{% endblock %}
+
+{% block content_action %}
+  {% link_for _('View'), controller='group', action='read', id=c.group_dict.name, class_='btn', icon='eye-open' %}
+{% endblock %}
+
+{% block content_primary_nav %}
+  {{ h.build_nav_icon('group_edit', _('Edit'), id=c.group_dict.name) }}
+  {{ h.build_nav_icon('group_members', _('Members'), id=c.group_dict.name) }}
+{% endblock %}
+
+{% block secondary_content %}
+  {% snippet "group/snippets/info.html", group=c.group_dict, show_nums=false %}
+{% endblock %}

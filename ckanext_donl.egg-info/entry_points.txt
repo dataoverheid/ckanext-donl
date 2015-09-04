@@ -1,0 +1,5 @@
+
+        [ckan.plugins]
+        donl_theme=ckanext.donl.plugin:ThemePlugin
+        donl_ipm=ckanext.donl.model.ipm_plugin:IpmPlugin
+    

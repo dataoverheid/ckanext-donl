@@ -1,0 +1,10 @@
+{% if pkg_dict.license_id %}
+  {% if not text_only %}
+    <h2>{{ _('License') }}:</h2>
+  {% endif %}
+  <span property="dc:rights">
+    <div class="license-icon {{ pkg_dict.license_title }}">{{ pkg_dict.license_title }}</div>
+  </span>
+{% elif text_only %}
+  {{ _('No License Provided') }}
+{% endif %}

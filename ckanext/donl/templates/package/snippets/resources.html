@@ -1,0 +1,20 @@
+{% set resources = pkg.resources or [] %}
+{% if resources %}
+<section class="module module-narrow resources">
+    <h2>{{ _("Resources") }}: </h2>
+    <ul class="menu">
+        {% for resource in resources %}
+            {% set link_class = '' %}
+            {% if active == resource.id %}
+            {% set link_class = ' ckan-active' %}
+            {% endif %}
+            <li class="leaf{{link_class}}">
+                <span class="label" data-format="{{ resource.format.lower() }}">{{ resource.format }}</span>
+                {% link_for h.resource_display_name(resource)|truncate(25), controller='package', action=action or
+                'resource_read', id=pkg.name, resource_id=resource.id %}
+
+            </li>
+        {% endfor %}
+    </ul>
+</section>
+{% endif %}

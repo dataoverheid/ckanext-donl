@@ -1,0 +1,4 @@
+{% if pkg %}  
+  <h2>Permalink:</h2>
+  {{ h.link_to(pkg.id, h.url_for(controller='package', action='read', id=pkg.id)) }}
+{% endif %}

@@ -1,0 +1,85 @@
+{#
+Displays a single of dataset.
+
+package        - A package to display.
+item_class     - The class name to use on the list item.
+hide_resources - If true hides the resources (default: false).
+banner         - If true displays a popular banner (default: false).
+truncate       - The length to trucate the description to (default: 180)
+truncate_title - The length to truncate the title to (default: 80).
+
+Example:
+
+  {% snippet 'snippets/package_item.html', package=c.datasets[0] %}
+
+#}
+{% set truncate = truncate or 150 %}
+{% set truncate_title = truncate_title or 80 %}
+{% set title = package.title or package.name %}
+{% set notes = h.markdown_extract(package.notes, extract_length=truncate) %}
+
+<li class="{{ item_class or "dataset-item" }}">
+  {% block package_item_content %}
+    <div class="dataset-content">     
+      {% if package.private %}
+        <span class="dataset-private label label-inverse">
+          <i class="icon-lock"></i>
+          {{ _('Verborgen') }}
+        </span>
+      {% endif %}
+
+      <a href="{{ h.url_for(controller='package', action='read', id=package.name) }}" >
+        <h2>{{ h.truncate(title, truncate_title) }}</h2>
+
+        {% if package.theme and h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[package.theme] %}
+          {% set theme = h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[package.theme].split(' | ') %}
+          {% set theme = theme[0]|replace(" ", "_") %}
+          {% set theme = theme.lower() %}
+          <div class="theme {{ theme }}">{{ h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[package.theme] }}</div>
+        {% endif %}
+
+        {#
+        {% if package.theme_secondary and h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[package.theme_secondary] %}
+          {% set theme_secondary = h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[package.theme_secondary].split(' | ') %}
+          {% set theme_secondary = theme_secondary[0]|replace(" ", "_") %}
+          {% set theme = theme_secondary.lower() %}
+          <div class="theme {{ theme }}">{{ h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[package.theme_secondary] }}</div>
+        {% endif %}
+        #}
+
+        {{ h.popular('recent views', package.tracking_summary.recent, min=10) if package.tracking_summary }}
+
+        {% if banner %}
+          <span class="banner">{{ _('Popular') }}</span>
+        {% endif %}
+        {% if notes %}
+          <span>{{ notes|urlize }}</span>
+        {% endif %}
+      </a>
+      
+      {% set organisatie = h.donl_sel_to_dict(h.donl_owms_taxonomie_overheidsorganisatie(), 'subtext')[package.maintainer] or package.maintainer %}
+      <span>Organisatie: <a href="/data/dataset?maintainer_facet={{ package.maintainer }}">{{ organisatie }}</a></span>
+   
+      |
+
+      <span>Onderwerpen:
+        {% for tag in package.tags %}
+          {% if loop.last %}
+            <a href="/data/dataset?tags={{ tag.name }}">{{ tag.name }}</a>
+          {% else %}
+            <a href="/data/dataset?tags={{ tag.name }}">{{ tag.name }}</a>,
+          {% endif %}
+        {% endfor %}
+      </span>
+    </div>
+    {% if package.resources and not hide_resources %}
+      <ul class="dataset-resources unstyled">
+        {% for resource in h.dict_list_reduce(package.resources, 'format') %}
+          <li>
+            <a href="{{ h.url_for(controller='package', action='read', id=package.name) }}" class="label" data-format="{{ resource.lower() }}">{{ resource }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endblock %}
+</li>

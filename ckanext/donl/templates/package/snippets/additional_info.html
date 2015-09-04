@@ -1,0 +1,180 @@
+<section class="additional-info">
+  
+  <h3>Kenmerken</h3>
+  <table class="table table-striped table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th scope="col">{{ _('Field') }}</th>
+        <th scope="col">{{ _('Value') }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if pkg_dict.temporal_from or pkg_dict.temporal_to %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _("Dekking in tijd") }}</th>
+          <td class="dataset-details">{{ pkg_dict.temporal_from or "onbekend" }} tot {{ pkg_dict.temporal_to or "onbekend" }}</td>
+        </tr>
+      {% endif %}
+      {% if pkg_dict.spatial %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _("Locatie") }}</th>
+          <td class="dataset-details">{{ pkg_dict.spatial }}</td>
+        </tr>
+      {% endif %}
+      {% if pkg_dict.accrual_periodicity %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _("Verversingsgraad") }}</th>
+          <td class="dataset-details">{{ h.donl_sel_to_dict(h.donl_owms_frequentie())[pkg_dict.accrual_periodicity] or pkg_dict.accrual_periodicity }}</td>
+        </tr>
+      {% endif %}
+      {% if pkg_dict.language %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _("Taal") }}</th>
+          <td class="dataset-details">{{ h.donl_sel_to_dict(h.donl_language())[pkg_dict.language] or pkg_dict.language }}</td>
+        </tr>
+      {% endif %}
+      {% if pkg_dict.license_id %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _("Licentie") }}</th>
+          <td class="dataset-details">{{ pkg_dict.license_title }}</td>
+        </tr>
+      {% endif %}
+      {% if pkg_dict.modified %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _("Wijzigingsdatum") }}</th>
+          <td class="dataset-details">{{ pkg_dict.modified }}</td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+    
+  <h3>Herkomst</h3>
+  <table class="table table-striped table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th scope="col">{{ _('Field') }}</th>
+        <th scope="col">{{ _('Value') }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if pkg_dict.maintainer %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _('Data-eigenaar') }}</th>
+          <td class="dataset-details" property="dc:contributor">{{ h.donl_sel_to_dict(h.donl_owms_taxonomie_overheidsorganisatie())[pkg_dict.maintainer] or pkg_dict.maintainer }}</td>
+        </tr>
+      {% endif %}
+      {% if pkg_dict.maintainer_email %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _('Contact data-eigenaar') }}</th>
+          <td class="dataset-details" property="dc:contributor">{{ h.mail_to(email_address=pkg_dict.maintainer_email, name=pkg_dict.maintainer_email) }}</td>
+        </tr>
+      {% endif %}
+      {% if pkg_dict.author %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _("Verstrekker") }}</th>
+          <td class="dataset-details" property="dc:creator">{{ h.donl_sel_to_dict(h.donl_owms_taxonomie_overheidsorganisatie())[pkg_dict.author] or pkg_dict.author }}</td>
+        </tr>
+      {% endif %}
+      {% if pkg_dict.author_email %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _("Contact verstrekker") }}</th>
+          <td class="dataset-details" property="dc:creator">{{ h.mail_to(email_address=pkg_dict.author_email, name=pkg_dict.author_email) }}</td>
+        </tr>
+      {% endif %}
+      {% if pkg_dict.source %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _("Catalogus") }}</th>
+          <td class="dataset-details">{{ pkg_dict.organization.title }}</td>
+        </tr>
+      {% endif %}
+      {% if pkg_dict.md_uri %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _('Catalogusreferentie') }}</th>
+          <td class="dataset-details" property="foaf:homepage">{{ h.link_to(pkg_dict.md_uri, pkg_dict.md_uri, rel='foaf:homepage', target='_blank') }}</td>
+        </tr>
+      {% endif %}
+      {% if pkg_dict.identifier %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _('Catalogus-identifier') }}</th>
+          <td class="dataset-details">{{ pkg_dict.identifier }}</td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+  
+  <h3>Context</h3>
+  <table class="table table-striped table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th scope="col">{{ _('Field') }}</th>
+        <th scope="col">{{ _('Value') }}</th>
+      </tr>
+    </thead>
+       
+      {% if pkg_dict.lod_stars %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _("Linked Data Score") }}</th>
+          <td class="dataset-details">{{ h.donl_sel_to_dict(h.donl_lod_stars())[pkg_dict.lod_stars] or pkg_dict.lod_stars}}</td>
+        </tr>
+      {% endif %}
+      {% if pkg_dict.version %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _("Versie") }}</th>
+          <td class="dataset-details">{{ pkg_dict.version }}</td>
+        </tr>
+      {% endif %}
+      {% if pkg_dict.version_notes %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _("Versietoelichting") }}</th>
+          <td class="dataset-details">{{ pkg_dict.version_notes }}</td>
+        </tr>
+      {% endif %}
+      {% if pkg_dict.theme %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _("Thema") }}</th>
+          <td class="dataset-details"><a href="/data/dataset?theme_displayname={{ h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[pkg_dict.theme] or pkg_dict.theme }}">{{ h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[pkg_dict.theme] or pkg_dict.theme }}</a></td>
+        </tr>
+      {% endif %}
+{#
+      {% if pkg_dict.theme_secondary %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _("Thema (secundair)") }}</th>
+          <td class="dataset-details"><a href="/data/dataset?theme_displayname={{ h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[pkg_dict.theme_secondary] or pkg_dict.theme_secondary }}">{{ h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[pkg_dict.theme_secondary] or pkg_dict.theme_secondary }}</a></td>
+        </tr>
+      {% endif %}
+#}
+      {% if pkg_dict.rights %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _("Rechten") }}</th>
+          <td class="dataset-details">{{ pkg_dict.rights }}</td>
+        </tr>
+      {% endif %}
+      {% if pkg_dict.conforms_to %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _("Conform") }}</th>
+          <td class="dataset-details">{{ pkg_dict.conforms_to }}</td>
+        </tr>
+      {% endif %}
+      {% if pkg_dict.grondslag %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _("Grondslag") }}</th>
+          <td class="dataset-details" property="overheid:grondslag">{{ h.link_to(pkg_dict.grondslag, pkg_dict.grondslag, rel='overheid:grondslag', target='_blank') }}</td>
+        </tr>
+      {% endif %}
+      {% if pkg_dict.grondslag_citeertitel %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _("Citeertitel") }}</th>
+          <td class="dataset-details">{{ pkg_dict.grondslag_citeertitel }}</td>
+        </tr>
+      {% endif %}
+      {% if pkg_dict.issued %}
+        <tr>
+          <th scope="row" class="dataset-label">{{ _("Uitgiftedatum") }}</th>
+          <td class="dataset-details">{{ pkg_dict.issued }}</td>
+        </tr>
+      {% endif %}
+
+    </tbody>
+  </table>
+  
+</section>

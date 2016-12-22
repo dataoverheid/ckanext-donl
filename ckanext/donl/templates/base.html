@@ -1,9 +1,8 @@
 {%- block doctype %}<!DOCTYPE html>{% endblock -%}
-
 {%- block htmltag -%}
 {% set lang = h.lang() %}
-<!--[if IE 7]> <html lang="{{ lang }}" class="ie ie7"> <![endif]-->
-<!--[if IE 8]> <html lang="{{ lang }}" class="ie ie8"> <![endif]-->
+<!--[if IE 7]> <html lang="{{ lang }}" class="ie ie7 lt-ie9"> <![endif]-->
+<!--[if IE 8]> <html lang="{{ lang }}" class="ie ie8 lt-ie9"> <![endif]-->
 <!--[if IE 9]> <html lang="{{ lang }}" class="ie9"> <![endif]-->
 <!--[if gt IE 8]><!--> <html lang="{{ lang }}"> <!--<![endif]-->
 {%- endblock -%}
@@ -12,7 +11,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+	
     <link rel="shortcut icon" href="/sites/all/themes/koop2/images/favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon-precomposed" href="/sites/all/themes/koop2/images/apple-touch-icon-precomposed.png">
     <link rel="apple-touch-icon" size="72x72"  href="/sites/all/themes/koop2/images/apple-touch-icon-72x72.png">
@@ -45,25 +44,17 @@
     
     <link rel="stylesheet" href="/sites/all/themes/koop2/css/main.css" />
     <link rel="stylesheet" href="/sites/all/themes/koop2/css/custom_theme_addons.css" />
+	<link rel="stylesheet" href="/sites/default/files/koop_theme/themes.css" />
     <!--[if IE 8]><link rel="stylesheet" href="sites/all/themes/koop2/css/IE8.css" /><![endif]-->
-
-    <script type="text/javascript" src="/sites/all/themes/koop2/js/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="/sites/all/themes/koop2/js/modernizr.custom.js"></script>
-    <script type="text/javascript" src="/sites/all/themes/koop2/js/KOOP_webapp.js"></script>
-    <script type="text/javascript" src="/sites/all/themes/koop2/js/custom_js_addons.js"></script>
-    <script type="text/javascript">
-      <!--//--><![CDATA[//><!--
-      $(document).ready(function () {
-        loadPageEventsAndPresentation(); 
-      });
-      //--><!]]>
-    </script>
-    <script type="text/javascript">
-      <!--//--><![CDATA[//><!--
-      Modernizr.load([{test : Modernizr.mq('only all'),nope : 'js/respond.min.js'},{test: Modernizr.touch,yep: 'js/KOOP_webapp_touch.js'},,]);
-      //--><!]]>
-    </script>
-    <!--[if lt IE 9]><script src="/sites/all/themes/koop2/js/respond.min.js"></script><![endif]-->
+    
+    {# 
+    
+    
+    GEEN JAVASCRIPT HIER, DEZE ONDERAAN PLAATSEN IN page.html
+    
+    CKAN laad zijn eigen jQuery, deze overschrijft de jQuery die hier staat (waardoor alles aan $ verdwijnt, incl prototypes en document-ready)
+    #}
+    
   </head>
 
   <body class="ckan {% block bodyclass %}{% endblock %}" {% block bodytag %} data-site-root="{{ h.url('/', locale='default', qualified=true) }}" data-locale-root="{{ h.url('/', qualified=true) }}" {% endblock %}>

@@ -9,33 +9,118 @@ Example:
   {% snippet "package/snippets/resources_list.html", pkg=pkg, resources=pkg.resources %}
 
 #}
-<section id="dataset-resources" class="resources">
-  <h3>{{ _('Bronnen') }}</h3>
-  {% block resource_list %}
-    {% if resources %}
-      <ul class="resource-list">
-        {% block resource_list_inner %}
-          {% for resource in resources %}
-            {% snippet 'package/snippets/resource_item.html', pkg=pkg, res=resource %}
-          {% endfor %}
-        {% endblock %}
-      </ul>
-    {% else %}
-      {% if h.check_access('package_update', {'id':pkg.id }) %}
-	      <p>
-	        {# Comment out "add some" as action doesn't exist yet #}
-	        {% trans url=h.url_for(controller='package', action='new_resource', id=pkg.name) %}
-	          <p class="empty">Deze dataset bevat (nog) geen bronnen. <a href="{{ url }}">Voeg een bron toe.</a>
-	        {% endtrans %}
-	      </p>
-	    {% else %}
-	      <p>
-	        {# Comment out "add some" as action doesn't exist yet #}
-	        {% trans url=h.url_for(controller='package', action='new_resource', id=pkg.name) %}
-	          <p class="empty">Deze dataset bevat (nog) geen bronnen.</a>
-	        {% endtrans %}
-	      </p>
-      {% endif %}
-    {% endif %}
-    {% endblock %}
+
+{% set tabFormats = h.getTabFormats() %}
+{% set unknownResources = h.checkForUnknownResources( resources ) %}
+
+<section id="dataset-tabs" class="dataset-tabs">
+	<ul class='tab'>
+		<li><a href='#downloads'>Downloads</a></li>
+		<li><a href='#webservice'>Webservice</a></li>
+		<li><a href='#documentatie'>Documentatie</a></li>
+		<li><a href='#link'>Links</a></li>
+		{% if unknownResources %}
+		<li><a href='#overige'>Overige</a></li>
+		{% endif %}
+		<li><a href='#metadata'>Metadata</a></li>
+
+	</ul>
 </section>
+
+
+{# Check for DOWNLOAD types in all resources, if found, add to tab #}
+<section id="downloads" class="downloads tab">
+	<div id="downloads-content" class='downloads-content'>
+		{% if resources %}
+			<ul class="resource-list">
+		    {% for resource in resources %}
+		    	{% if resource.format.lower() in tabFormats.Downloads %}
+		    		{% snippet 'package/snippets/resource_item_downloads.html', pkg=pkg, res=resource %}
+		    	{% endif %}
+		    {% endfor %}
+		  </ul>
+    {% endif %}
+</div>
+    <div class='buttons-container' id='downloads-buttons-container'>
+	    {% snippet 'package/snippets/dataset-buttons.html', pkg=pkg, h=h %}
+    </div>
+</section>
+
+
+{# Check for WEBSERVICE types in all resources, if found, add to tab #}
+<section id="webservice" class="webservice tab">
+	<div id="webservice-content" class='webservice-content'>
+		{% if resources %}
+			<ul class="resource-list">
+		    {% for resource in resources %}
+		    	{% if resource.format.lower() in tabFormats.Webservice %}
+		    		{% snippet 'package/snippets/resource_item_webservice.html', pkg=pkg, res=resource %}
+		    	{% endif %}
+		    {% endfor %}
+		  </ul>
+    {% endif %}
+	</div>
+	<div class='buttons-container' id='webservices-buttons-container'>
+	    {% snippet 'package/snippets/dataset-buttons.html', pkg=pkg, h=h %}
+	</div>
+</section>
+
+{# Check for DOCUMENTATIE types in all resources, if found, add to tab #}
+<section id="documentatie" class="documentatie tab">
+	<div id="documentatie-content" class='documentatie-content'>
+		{% if resources %}
+			<ul class="resource-list">
+		    {% for resource in resources %}
+		    	{% if resource.format.lower() in tabFormats.Documentatie %}
+		    		{% snippet 'package/snippets/resource_item_downloads.html', pkg=pkg, res=resource %}
+		    	{% endif %}
+		    {% endfor %}
+		  </ul>
+    {% endif %}
+	</div>
+    <div class='buttons-container' id='documentatie-buttons-container'>
+        {% snippet 'package/snippets/dataset-buttons.html', pkg=pkg, h=h %}
+    </div>
+</section>
+
+
+{# Check for LINKS types in all resources, if found, add to tab #}
+<section id="link" class="link tab">
+	<div id="link-content" class='link-content'>
+		{% if resources %}
+			<ul class="resource-list">
+		    {% for resource in resources %}
+		    	{% if resource.format.lower() in tabFormats.Links %}
+		    		{% snippet 'package/snippets/resource_item_links.html', pkg=pkg, res=resource %}
+		    	{% endif %}
+		    {% endfor %}
+		  </ul>
+    {% endif %}
+	</div>
+    <div class='buttons-container' id='links-buttons-container'>
+        {% snippet 'package/snippets/dataset-buttons.html', pkg=pkg, h=h %}
+    </div>
+</section>
+
+
+{# Create an extra tab for unknown resources #}
+{% if unknownResources %}
+<section id="overige" class="link tab">
+	<div id="overige-content" class='link-content'>
+		{% if resources %}
+			<ul class="resource-list">
+		    {% for resource in resources %}
+		    	{% if resource.format.lower() not in tabFormats.All %}
+		    		{% snippet 'package/snippets/resource_item_overige.html', pkg=pkg, res=resource %}
+		    	{% endif %}
+		    {% endfor %}
+		  </ul>
+    {% endif %}
+	</div>
+    <div class='buttons-container' id='overige-buttons-container'>
+        {% snippet 'package/snippets/dataset-buttons.html', pkg=pkg, h=h %}
+    </div>
+</section>
+{% endif %}
+
+

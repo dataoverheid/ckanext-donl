@@ -6,8 +6,38 @@
 {% set user_is_sysadmin = h.check_access('sysadmin') %}
 {% set show_organizations_selector = organizations_available and (user_is_sysadmin or dataset_is_draft) %}
 {% set show_visibility_selector = dataset_has_organization or (organizations_available and (user_is_sysadmin or dataset_is_draft)) %}
+{% set maintainer = data.maintainer or h.donl_maintainer_from_profile(c.user) %}
+{% set author = data.author or h.donl_author_from_profile(c.user) %}
 
-<h2>{{ _('Organisatiegegevens') }}</h2>
+
+<h2>{{ _('A. Organisatie') }}</h2>
+
+  <div class="control-group control-medium control-select">
+    <label for="field-maintainer" class="control-label"><span title=" {{ _('This field is required') }}" class="control-required">*</span> {{ _('Data-eigenaar') }}</label>
+    <div class="controls">
+      <select id="field-maintainer" name="maintainer" data-module="autocomplete" {% if not user_is_sysadmin %}readonly="readonly" disabled="disabled"{% endif%}>
+        {% for organization in h.donl_owms_taxonomie_overheidsorganisatie() %}
+          <option value="{{ organization.value }}" {% if organization.value == maintainer %} selected="selected" {% endif %}>{{ organization.text }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+{{ form.input('maintainer_email', label=_('Data-eigenaar Email'), id='field-maintainer-email', placeholder=_('joe@example.com'), value=data.maintainer_email or h.donl_email_from_profile(c.user), error=errors.maintainer_email, classes=['control-full', 'control-large']) }}
+
+
+  <div class="control-group control-medium control-select">
+    <label for="field-author" class="control-label">{{ _('Verstrekker') }}</label>
+    <div class="controls">
+      <select id="field-author" name="author" data-module="autocomplete" {% if not user_is_sysadmin %}readonly="readonly" disabled="disabled"{% endif%}>
+        {% for organization in h.donl_owms_taxonomie_overheidsorganisatie() %}
+          <option value="{{ organization.value }}" {% if organization.value == author %} selected="selected" {% endif %}>{{ organization.text }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+{{ form.input('author_email', label=_('Verstrekker Email'), id='field-author-email', placeholder=_('joe@example.com'), value=data.author_email or h.donl_email_from_profile(c.user), error=errors.author_email, classes=['control-full', 'control-large']) }}
 
 {% if user_is_sysadmin %}
   <div class="control-group control-medium control-select">
@@ -20,8 +50,6 @@
       </select>
     </div>
   </div>
-
-
 
   {% set existing_org = data.owner_org or data.group_id %}
   <div class="control-group">
@@ -41,43 +69,24 @@
   </div>
 {% endif %}
 
-{# if dataset_is_draft #}
-  <div class="control-group control-medium control-select">
-    <label for="field-maintainer" class="control-label"><span title=" {{ _('This field is required') }}" class="control-required">*</span> {{ _('Data-eigenaar') }}</label>
-    <div class="controls">
-      <select id="field-maintainer" name="maintainer" data-module="autocomplete">
-        {% for organization in h.donl_owms_taxonomie_overheidsorganisatie() %}
-          <option value="{{ organization.value }}" {% if organization.value == data.maintainer %} selected="selected" {% endif %}>{{ organization.text }}</option>
-        {% endfor %}
-      </select>
-    </div>
-  </div>
-{# else %}
-  {{ form.input('maintainer', label=_('Data-eigenaar'), id='field-maintainer', placeholder=_('vb. Ministerie van Financiën, DG Rijksbegroting'), value=data.maintainer, error=errors.maintainer, classes=['control-full', 'control-large'], is_required=true) }}
-{% endif #}
 
-{{ form.input('maintainer_email', label=_('Data-eigenaar Email'), id='field-maintainer-email', placeholder=_('joe@example.com'), value=data.maintainer_email, error=errors.maintainer_email, classes=['control-full', 'control-large']) }}
+<h2>{{ _('B. Verplichte velden') }}</h2>
+
+{{ form.select('dataset_status', label=_('Status'), id='field-dataset_status', selected=data.dataset_status, error=errors.dataset_status, classes=['control-select'], options=h.donl_dataset_status(), is_required=true) }}
+
+{% set date_planned_display = "block" if data.dataset_status == "http://data.overheid.nl/status/gepland" else "none" %}
+<div id="div-date_planned" style="display:{{ date_planned_display }}">
+  {{ form.input('date_planned', placeholder="dd-mm-jjjj", label=_('Datum gepland'), id='field-date_planned', value=data.date_planned, error=errors.date_planned, classes=['control-full', 'control-large'], type='text', is_required=true) }}
+</div>
 
 
-{% if dataset_is_draft %}
-  <div class="control-group control-medium control-select">
-    <label for="field-author" class="control-label">{{ _('Verstrekker') }}</label>
-    <div class="controls">
-      <select id="field-author" name="author" data-module="autocomplete">
-        {% for organization in h.donl_owms_taxonomie_overheidsorganisatie() %}
-          <option value="{{ organization.value }}" {% if organization.value == data.author %} selected="selected" {% endif %}>{{ organization.text }}</option>
-        {% endfor %}
-      </select>
-    </div>
-  </div>
-{% else %}
-  {{ form.input('author', label=_('Verstrekker'), id='field-author', placeholder=_('vb. PDOK'), value=data.author, error=errors.author, classes=['control-full', 'control-large']) }}
-{% endif %}
+{{ form.input('title', id='field-title', label=_('Title'), placeholder=_('vb. Rijksbegroting 2014'), value=data.title, error=errors.title, classes=['control-full', 'control-large'], is_required=true) }}
 
-{{ form.input('author_email', label=_('Verstrekker Email'), id='field-author-email', placeholder=_('joe@example.com'), value=data.author_email, error=errors.author_email, classes=['control-full', 'control-large']) }}
+{{ form.input('name', id='field-name', label=_('Name'), placeholder=_(''), value=data.name, error=errors.title, classes=['control-full', 'control-large'], is_required=true) }}
 
 
-<h2>{{ _('Dataset') }}</h2>
+
+{{ form.markdown('notes', id='field-notes', label=_('Description'), placeholder=_('vb. Een overzicht van uitgaven, verplichtingen en ontvangsten per artikel van de departementale begrotingen.'), value=data.notes, error=errors.notes, is_required=true) }}
 
 <div class="control-group control-select">
   {% set error = errors.license_id %}
@@ -85,7 +94,7 @@
   <div class="controls">
     <select id="field-license" name="license_id" {# data-module="autocomplete" #}>
       {% for license_desc, license_id in licenses %}
-        <option value="{{ license_id }}" {% if data.get('license_id', 'notspecified') == license_id %}selected="selected"{% endif %}>{{ license_desc }}</option>
+        <option value="{{ license_id }}" {% if data.get('license_id', 'notspecified') == license_id %}selected="selected"{%elif license_id == 'cc-0'%}selected="selected"{% endif %}>{{ license_desc }}</option>
       {% endfor %}
     </select>
     {% if error %}<span class="error-block">{{ error }}</span>{% endif %}
@@ -100,38 +109,13 @@
   </div>
 </div>
 
-{{ form.input('title', id='field-title', label=_('Title'), placeholder=_('vb. Rijksbegroting 2014'), value=data.title, error=errors.title, classes=['control-full', 'control-large'], attrs={'data-module': 'slug-preview-target'}, is_required=true) }}
-
-{% set name_prefix = h.url_for(controller='package', action='read', id='') %}
-{% set name_domain = h.url_for(controller='package', action='read', id='', qualified=true) %}
-{% set name_domain = name_domain|replace("http://", "")|replace("https://", "") %}
-{% set name_attrs = {'data-module': 'slug-preview-slug', 'data-module-prefix': name_domain, 'data-module-placeholder': '<dataset>'} %}
-{{ form.prepend('name', id='field-name', label=_('Alias'), prepend=name_prefix, placeholder=_('eg. my-dataset'), value=data.name, error=errors.name, attrs=name_attrs, is_required=true) }}
-
-{{ form.select('theme', label=_('Thema'), id='field-theme', error=errors.theme, classes=['control-medium'], options=h.donl_owms_taxonomie_beleidsagenda(), selected=data.theme, attrs={'data-module': 'autocomplete'}) }}
-
-{# form.select('theme_secondary', label=_('Thema (secundair)'), id='field-theme_secondary', error=errors.theme_secondary, classes=['control-medium'], options=h.donl_owms_taxonomie_beleidsagenda(), selected=data.theme_secondary, attrs={'data-module': 'autocomplete'}) #}
-
-{% set tag_attrs = {'data-module': 'autocomplete', 'data-module-tags': '', 'data-module-source': '/api/2/util/tag/autocomplete?incomplete=?'} %}
-{{ form.input('tag_string', id='field-tags', label=_('Tags'), placeholder=_('vb. begrotingsstaat, najaarsnota, prinsjesdag, rijksbegroting, slotwet, voorjaarsnota'), value=data.tag_string, error=errors.tags, classes=['control-full'], attrs=tag_attrs) }}
-
-{{ form.markdown('notes', id='field-notes', label=_('Description'), placeholder=_('vb. Een overzicht van uitgaven, verplichtingen en ontvangsten per artikel van de departementale begrotingen.'), value=data.notes, error=errors.notes, is_required=true) }}
-
 {{ form.select('language', label=_('Taal'), id='field-language', selected=data.language, error=errors.language, classes=['control-select'], is_required=true, options=h.donl_language()) }}
 
-
-<h2>{{ _('Versie') }}</h2>
-
-{{ form.input('version', label=_('Version'), id='field-version', placeholder=_('1.0'), value=data.version, error=errors.version, classes=['control-full', 'control-large']) }}
-
-{{ form.input('version_notes', label=_('Versietoelichting'), id='field-version_notes', value=data.version_notes, error=errors.version_notes, classes=['control-full', 'control-large']) }}
-
-{{ form.input('modified', label=_('Wijzigingsdatum'), id='field-modified', value=data.modified, error=errors.modified, classes=['control-full', 'control-large'], type='date', is_required=true) }}
-
-{{ form.input('landingpage', label=_('Meer informatie'), placeholder=_('vb. http://opendata.rijksbegroting.nl/'), id='field-landingpage', value=data.landingpage, error=errors.landingpage, classes=['control-full', 'control-large'], type='url') }}
+{{ form.input('modified', placeholder="dd-mm-jjjj", label=_('Wijzigingsdatum'), id='field-modified', value=data.modified or '', error=errors.modified, classes=['control-full', 'control-large'], type='text', is_required=true) }}
 
 
-<h2>{{ _('Vervolgactie') }}</h2>
+
+<h2>{{ _('Zichtbaarheid') }}</h2>
 
 {# if we have a default group then this wants remembering #}
 {% if data.group_id %}

@@ -46,6 +46,7 @@
 
               {% block primary %}
                 <div class="mainform showleftbar" id="content">
+                 
                   {% block primary_content %}
                     <article class="module">
                       {% block page_header %}
@@ -62,6 +63,19 @@
                       {% endblock %}
                       <div class="content_section">
                         <div class="module-content">
+
+<div id="permalink_popup" class="permalink_popup hidden">
+    <div class="popup_row copy_status permalink_popup"></div>
+    <div class="popup_row permalink_popup">
+        <label class="permalink_popup">Permalink</label>
+        <span id="permalink_showlink" class="permalink permalink_popup"></span>
+    </div>
+    <div class="popup_row permalink_popup" id="permalink_popup_copy_btn">
+        <a class="btn permalink_popup" href="#"><i class="icon-copy permalink_popup"></i>Kopieer</a>
+    </div>
+</div>
+
+
                           {% if self.page_primary_action() | trim %}
                             <div class="page_primary_action">
                               {% block page_primary_action %}{% endblock %}
@@ -99,6 +113,9 @@
 {%- block scripts %}
     {% resource 'base/main' %}
     {% resource 'base/ckan' %}
+    
+    {% resource 'donl/all_in_one.js' %}
+    
     {% if g.tracking_enabled %}
       {% resource 'base/tracking.js' %}
     {% endif %}

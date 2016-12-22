@@ -2,16 +2,11 @@
 
 {% block subtitle %}{{ pkg.title or pkg.name }} - {{ super() }}{% endblock %}
 
-{% block links -%}
-  {{ super() }}
-  <link rel="alternate" type="application/rdf+xml" href="{{ h.url_for(controller='package', action='read', id=pkg.id, format='rdf', qualified=True) }}"/>
-{% endblock -%}
-
 {% block head_extras -%}
   {{ super() }}
   {% set description = h.markdown_extract(pkg.notes, extract_length=200)|forceescape %}
   <meta property="og:title" content="{{ h.dataset_display_name(pkg) }} - {{ g.site_title }}">
-  <meta property="og:description" content="{{ description|forceescape }}">
+  <meta property="og:description" content="{{ description|forceescape|trim }}">
 {% endblock -%}
 
 {% block breadcrumb_content %}
@@ -32,22 +27,19 @@
   {{ h.build_nav_icon('dataset_read', _('Dataset'), id=pkg.name) }}
   {{ h.build_nav_icon('dataset_groups', _('Groups'), id=pkg.name) }}
   {{ h.build_nav_icon('dataset_activity', _('Activity Stream'), id=pkg.name) }}
-  {{ h.build_nav_icon('related_list', _('Related'), id=pkg.name) }}
+  <li><a id="permalink" href="{{h.url_for(controller='package', action='read', id=pkg.id)}}"><i class="icon-link"></i>Permalink</a></li> 
+  
 {% endblock %}
 
 {% block primary_content_inner %}
     {% block package_revision_info %}
-      {% if c.pkg_revision_id %}
+      {% if c.revision_date %}
         <div class="module info alert alert-info">
           <p class="module-content">
-            {% set timestamp = h.render_datetime(c.pkg_revision_timestamp, with_hours=True) %}
+            {% set timestamp = h.render_datetime(c.revision_date, with_hours=True) %}
             {% set url = h.url(controller='package', action='read', id=pkg.name) %}
 
-            {% if c.pkg_revision_not_latest %}
-              {% trans timestamp=timestamp, url=url %}This is an old revision of this dataset, as edited at {{ timestamp }}. It may differ significantly from the <a href="{{ url }}">current revision</a>.{% endtrans %}
-            {% else %}
-              {% trans timestamp=timestamp %}This is the current revision of this dataset, as edited at {{ timestamp }}.{% endtrans %}
-            {% endif %}
+            {% trans timestamp=timestamp, url=url %}This is an old revision of this dataset, as edited at {{ timestamp }}. It may differ significantly from the <a href="{{ url }}">current revision</a>.{% endtrans %}
           </p>
         </div>
       {% endif %}
@@ -62,25 +54,24 @@
     {% snippet 'package/snippets/info.html', pkg=pkg %}
   {% endblock %}
 
-  {% block package_maintainer %}
-    {% if pkg.maintainer %}
-      {% snippet 'package/snippets/maintainer.html', pkg=pkg %}
-    {% endif %}
+  {% block package_features %}
+    {% snippet 'package/snippets/features.html', pkg=pkg %}
   {% endblock %}
 
   {% block package_license %}
     {% snippet "snippets/license.html", pkg_dict=pkg %}
   {% endblock %}
 
-  {% block package_organization %}
-    {% if pkg.organization.title %}
-      {% snippet 'package/snippets/organization_title.html', pkg=pkg %}
+  {% block package_maintainer %}
+    {% if pkg.maintainer %}
+      {% snippet 'package/snippets/maintainer.html', pkg=pkg %}
     {% endif %}
   {% endblock %}
 
-  {% block package_identifier %}
-    {% snippet "package/snippets/identifier.html", pkg=pkg %}
-  {% endblock %}
+  {# permalink staat tegenwoordig bovenin de site #}
+  {# block package_identifier #}
+    {# snippet "package/snippets/identifier.html", pkg=pkg #}
+  {# endblock #}
 
   {% block package_feedback %}
     {% snippet "package/snippets/feedback.html", pkg=pkg %}

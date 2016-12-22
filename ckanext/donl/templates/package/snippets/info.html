@@ -1,35 +1,46 @@
-{% if pkg %}  
-  <h2>Dataset informatie:</h2>
+{% if pkg %}
+  <h2>Dataset:</h2>
   <div class="dataset-information">
     <div class="information-icon">
       {{ h.link_to(pkg.title or pkg.name, h.url_for(controller='package', action='read', id=pkg.name)) }}
     </div>
-
-    {% if pkg.theme and h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[pkg.theme] %}
-      {% set theme = h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[pkg.theme] or pkg.theme %}
-      {% set theme = theme.split(' | ') %}
-      {% set theme = theme[0]|replace(" ", "_") %}
-      {% set theme = theme.lower() %}
-      <div class="theme {{ theme }}">
-        <a href="/data/dataset?theme_displayname={{ h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[pkg.theme] or pkg.theme }}">
-          {{ h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[pkg.theme] }}
-        </a>
-      </div>
-      {#
-      {% if pkg.theme and h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[pkg.theme_secondary] %} 
-        {% set theme = h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[pkg.theme_secondary] or pkg.theme_secondary %}
-        {% set theme = theme.split(' | ') %}
-        {% set theme = theme[0]|replace(" ", "_") %}
-        {% set theme = theme.lower() %}
-        <div class="theme {{ theme }}">
-          <a href="/data/dataset?theme_displayname={{ h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[pkg.theme_secondary] or pkg.theme_secondary }}">
-            {{ h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[pkg.theme_secondary] }}
-          </a>
+  </div>
+  
+  <h2>Status:</h2>
+  <div class="dataset-information">
+    {% if pkg.dataset_status %}
+        <div>
+        {{ _("Status") }}: {{ h.donl_sel_to_dict(h.donl_dataset_status())[pkg.dataset_status] or pkg.dataset_status }}<br>
         </div>
-      {% endif %}
-      #}
-    {% else %}
-      <div class="theme unkown">Onbekend</div>
     {% endif %}
-  </div> 
+    {% if pkg.modified %}
+        <div>
+        Update: {{ pkg.modified }}
+        </div>
+    {% endif %}
+    {% if pkg.version %}
+        <div>
+        {{ _("Versie") }}: {{ pkg.version }}
+        </div>
+    {% endif %}
+    
+    {#
+    Oude method via Drupal
+    <div class="dataset-qualtiy">
+      <a href="/monitor/datasets"><div class="quality-label">Kwaliteit: </div><div class="dataset-quality-{{ h.drupal_get_dataset_quality('dataset', pkg.id)|safe }}"></div></a>
+    </div>
+    #}
+    
+    {# Nieuwe methode via CKAN #}
+    <div class="dataset-qualtiy">
+        <a href="/monitor/datasets"><div class="quality-label">Kwaliteit: </div>
+        {% if pkg.dataset_quality %}
+            <div class="dataset-quality-{{ pkg.dataset_quality|safe }}"></div></a>
+        {% else %}
+            <div class="dataset-quality-3"></div></a>
+        {% endif %}
+    </div>
+    
+  </div>
+  
 {% endif %}

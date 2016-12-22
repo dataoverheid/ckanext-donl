@@ -1,0 +1,48 @@
+{% if pkg %}
+    <h2>Kenmerken:</h2>
+    <div class="dataset-information">
+        {% if pkg.theme and h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[pkg.theme] %}
+            {% set theme = h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[pkg.theme] or pkg.theme %}
+            {% set theme = theme.split(' | ') %}
+            {% set theme = theme[0]|replace(" ", "_") %}
+            {% set theme = theme.lower() %}
+            <div class="theme {{ theme }}">
+                <a href="/data/dataset?theme_displayname={{ h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[pkg.theme] or pkg.theme }}">
+                {{ h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[pkg.theme] }}
+                </a>
+            </div>
+        {% else %}
+            <div class="theme unkown">Onbekend</div>
+        {% endif %}
+
+            
+        {% if pkg.temporal_from or pkg.temporal_to %}
+            {{ _("Dekking in tijd") }}: {{ pkg.temporal_from or "onbekend" }} {{ _('tot') }} {{ pkg.temporal_to or "onbekend" }}<br>
+        {% endif %}
+
+        {% if pkg.accrual_periodicity %}
+            {{ _("Verversingsgraad") }}: {{ h.donl_sel_to_dict(h.donl_owms_frequentie())[pkg.accrual_periodicity] or pkg.accrual_periodicity }}<br>
+        {% endif %}
+           
+
+        {% if pkg.high_value_dataset %}
+            {{ _("High value dataset") }}
+        {% endif %}
+        
+        <br />
+    
+        {% set kenmerken = h.get_drupal_taxonomie("kenmerken") %}
+        {% if pkg.features %}
+            <ul>
+                <strong>Kenmerken:</strong>
+            {% for kenmerk in kenmerken %}
+                {% for option in kenmerk.children %}
+                    {% if h.displayNameToSystemName( option.name ) in  pkg.features %}
+                        <li>{{ option.name }}</li>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+{% endif %}

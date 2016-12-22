@@ -2,26 +2,40 @@
 {% set url_action = 'resource_edit' if url_is_edit and can_edit else 'resource_read' %}
 {% set url = h.url_for(controller='package', action=url_action, id=pkg.name, resource_id=res.id) %}
 
-{#
-Geography Markup Language, Geo GML
-Geo ESRI
-Geo KML
-Geo Shape 
-#}
 
-<!-- package\snippets\resource_item.html -->
 <li class="resource-item" data-id="{{ res.id }}">
 
-  <div class="resource-row">
-    {% if url_action %}
-    <a class="edit-resource btn btn-primary" href="{{ url }}" title="{{ res.name or res.description }}">
-      Beheer
-    </a>
-    {% endif %}
 
+
+<div class="resource-row">
+  <div class="resource-left">
+    <span class="label" data-format="{{ res.format.lower() }}">{{ res.format }}</span>
+    <a class="heading" href="{{ url }}" title="{{ res.name or res.description }}">
+        {{ h.resource_display_name(res) | truncate(50, True) }}
+        {{ h.popular('views', res.tracking_summary.total, min=10) }}
+    </a>
+    <br />
+    {% if res.orginal_url %}
+        <a href="{{ res.orginal_url }}" class="resource-url-analytics" target="_blank"> download bestand</a>
+    {%  else %}
+        <a href="{{ res.url }}" class="resource-url-analytics" target="_blank"> download bestand</a>
+    {% endif %}
+  </div>
+  <div class="resource-right">
+    {{ h.resourceLinkStatusDiv( res.link_status )|safe }}
+  </div>
+</div>
+
+
+
+
+
+{#
+<!--
+  <div class="resource-row">
     {% block resource_item_title %}
       <a class="heading" href="{{ url }}" title="{{ res.name or res.description }}">
-        {{ h.resource_display_name(res) | truncate(40) }}
+        {{ h.resource_display_name(res) | truncate(50) }}
         {{ h.popular('views', res.tracking_summary.total, min=10) }}
       </a>
     {% endblock %}
@@ -45,12 +59,11 @@ Geo Shape
   {% if res.url %}
     <div class="resource-row">
       <span class="resource-label">Toegangslink:</span>
-      <a href="{{ res.url }}">{{ res.url }}</a>
-{#      {% if h.koop_theme_is_resource_downloadable(res.format) %}
+      {% if h.koop_theme_is_resource_downloadable(res.format) %}
         <a href="{{ res.url }}">{{ res.url }}</a>
       {% else %}
         {{ res.url }}
-      {% endif %}#}
+      {% endif %}
     </div>
   {% endif %}
 
@@ -60,7 +73,7 @@ Geo Shape
       <span class="resource-label">Downloadlink:</span> <a href="{{ res.download_url }}">{{ res.download_url }}</a>
     </div> 
   {% endif %}
- 
+
 
   <div class="resource-row">
     <div class="resource-row-block">
@@ -76,5 +89,6 @@ Geo Shape
       <span class="resource-label">Grootte bestand:</span><br />{{ res.bytesize }}
     </div>
   </div>
+--> 
+#}
 </li>
-<!-- // package\snippets\resource_item.html -->

@@ -1,0 +1,10 @@
+
+<div id='dataset-resources-buttons' class='dataset-buttons'>
+    <ul class="button-list well">
+	    <li><a class="tag" href="/node/add/dataverzoek?data_eigenaar={{ h.donl_sel_to_dict(h.donl_owms_taxonomie_overheidsorganisatie())[pkg.maintainer] or pkg.maintainer }}&gevraagde_data={{pkg.title}}">Dataverzoek doen</a></li>
+		<li><a class="tag" href="/feedback_dataset/aanmaken?link_dataset={{pkg.id}}&titel_dataset={{pkg.title}}&data_eigenaar={{pkg.maintainer_displayname}}">Feedback</a></li>
+		{% if pkg.maintainer_email %}
+		    <li><a class="tag" href="mailto:{{pkg.maintainer_email}}">E-mail data-eigenaar</a></li>
+		{% endif %}
+	</ul>
+</div>

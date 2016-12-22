@@ -1,0 +1,25 @@
+{% set can_edit = h.check_access('package_update', {'id':pkg.id }) %}
+{% set url_action = 'resource_edit' if url_is_edit and can_edit else 'resource_read' %}
+{% set url = h.url_for(controller='package', action=url_action, id=pkg.name, resource_id=res.id) %}
+
+
+<li class="resource-item" data-id="{{ res.id }}">
+    <div class="resource-row">
+        <div class="resource-left">
+            <span class="label" data-format="{{ res.format.lower() }}">{{ res.format }}</span>
+            <a class="heading" href="{{ url }}" title="{{ res.name or res.description }}">
+                {{ h.resource_display_name(res) | truncate(50, True) }}
+                {{ h.popular('views', res.tracking_summary.total, min=10) }}
+            </a>
+            <br />
+            {% if res.orginal_url %}
+                <a href="{{ res.orginal_url }}" class="resource-url-analytics" target="_new">link naar website</a>
+            {%  else %}
+                <a href="{{ res.url }}" class="resource-url-analytics" target="_new">link naar website</a>
+            {% endif %}
+        </div>
+        <div class="resource-right">
+            {{ h.resourceLinkStatusDiv( res.link_status )|safe }}
+        </div>
+    </div>
+</li>

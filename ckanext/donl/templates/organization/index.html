@@ -39,16 +39,17 @@
 	  	<li>
 			{% set maintainer_displayname = odict[mwd.maintainer] %}
 	  	{% if (maintainer_displayname) %}
-	  		{{ h.link_to(maintainer_displayname, h.url_for(controller='package', action='search', maintainer_facet=mwd.maintainer)) }}
+	  		<a href="/monitor?data_eigenaar={{ maintainer_displayname }}">{{ maintainer_displayname }}</a>
 	  	{% else %}
 	  		{{ h.link_to(mwd.maintainer, h.url_for(controller='package', action='search', maintainer_facet=mwd.maintainer)) }} <span title="Geen URI bekend">*</span>
 	  	{% endif %}
-	  	({{ mwd.number_of_datasets }} dataset{% if mwd.number_of_datasets > 1 %}s{% endif %})
+
+		<a href="{{ h.url_for(controller='package', action='search', maintainer_facet=mwd.maintainer) }}">({{ mwd.number_of_datasets }} dataset{% if mwd.number_of_datasets > 1 %}s{% endif %})</a>
 	  	</li>
 	  {% endfor %}
 		</ul>
 	{% endif %}
-
+	
 
   {#
   {% block organizations_search_form %}

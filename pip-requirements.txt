@@ -1,0 +1,14 @@
+# This file allows you to install CKAN extensions related to
+# ckanext-donl and the dependencies for ckanext-donl. After running
+# this, some of the installed CKAN extensions have their own
+# pip-requirements.txt to install too.
+#
+# Use it like this:
+#
+#   pip install -r pip-requirements.txt
+
+# PyMemoize for caching
+PyMemoize>=1.0.1
+
+# ckanext-userextra (for extra user fields)
+-e git+https://github.com/ESRC-CDRC/ckan-ckanext-userextra

@@ -11,15 +11,15 @@ Activate CKAN environment
 	. /home/ckan/ckan/lib/default/bin/activate
 
 
-Installatie PyMemoize
+Installatie requirements
 
-	cd ckanext-donl/modules/PyMemoize-master
-	sudo python setup.py install
+	cd ckanext-donl
+	pip install -r pip-requirements.txt
 
 
 CKAN extensie
 
-	cd ckanext-donl/
+	cd ckanext-donl
 	sudo python setup.py develop
 
 

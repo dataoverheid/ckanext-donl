@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '1.0'
+version = '2.2.160323'
 
 setup(
     name='ckanext-donl',
@@ -20,11 +20,19 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        # -*- Extra requirements: -*-
+        # List of dependencies is moved to pip-requirements.txt
     ],
     entry_points='''
         [ckan.plugins]
-        donl_theme=ckanext.donl.plugin:ThemePlugin
-        donl_ipm=ckanext.donl.model.ipm_plugin:IpmPlugin
+        donl_theme = ckanext.donl.plugin:ThemePlugin
+        donl_drupal_auth = ckanext.donl.drupal_auth_plugin:DrupalAuthPlugin
+        donl_ipm = ckanext.donl.model.ipm_plugin:IpmPlugin
+        donl_authorize = ckanext.donl.donl_authorize_plugin:DonlAuthorizePlugin
+        
+        [paste.paster_command]
+        donl = ckanext.donl.commands:DonlCommand
+
+        [ckan.rdf.profiles]
+        dutch_dcat_ap = ckanext.donl.profiles.dutch_dcat_ap:DutchDCATAPProfile
     ''',
 )

@@ -1,32 +1,114 @@
 {% import 'macros/form.html' as form %}
 
-<h2>{{ _('Context') }}</h2>
 
-{{ form.input('md_uri', label=_('Metadata URI'), id='field-md_uri', placeholder=_('http://example.com/dataset.json'), value=data.md_uri, error=errors.md_uri, classes=['control-full', 'control-large']) }}
+<h2>{{ _('D. Vindbaarheid') }}</h2>
+
+
+{{ form.select('theme', label=_('Thema'), id='field-theme', error=errors.theme, classes=['control-medium'], options=h.donl_owms_taxonomie_beleidsagenda(), selected=data.theme, attrs={'data-module': 'autocomplete'}) }}
+
+{% set tag_attrs = {'data-module': 'autocomplete', 'data-module-tags': '', 'data-module-source': '/api/2/util/tag/autocomplete?incomplete=?'} %}
+{{ form.input('tag_string', id='field-tags', label=_('Tags'), placeholder=_('vb. begrotingsstaat, najaarsnota, prinsjesdag, rijksbegroting, slotwet, voorjaarsnota'), value=data.tag_string, error=errors.tags, classes=['control-full'], attrs=tag_attrs) }}
+
+
+
+
+<h2>{{ _('E. Kenmerken data') }}</h2>
 
 {{ form.input('spatial', label=_('Locatie'), placeholder=_('vb. Nederland'), id='field-spatial', value=data.spatial, error=errors.spatial, classes=['control-full', 'control-large']) }}
 
-{{ form.input('temporal_from', label=_('Periode van'), placeholder=_('vb. 1 januari 2014'), id='field-temporal_from', value=data.temporal_from, error=errors.temporal_from, classes=['control-full', 'control-large'], type='date') }}
-{{ form.input('temporal_to', label=_('Periode tot'), placeholder=_('vb. 31 december 2014'), id='field-temporal_to', value=data.temporal_to, error=errors.temporal_to, classes=['control-full', 'control-large'], type='date') }}
+{{ form.input('temporal_from', label=_('Periode van'), placeholder=_('dd-mm-jjjj'), id='field-temporal_from', value=data.temporal_from, error=errors.temporal_from, classes=['control-full', 'control-large'], type='text') }}
+{{ form.input('temporal_to', label=_('Periode tot'), placeholder=_('dd-mm-jjjj'), id='field-temporal_to', value=data.temporal_to, error=errors.temporal_to, classes=['control-full', 'control-large'], type='text') }}
 
 {{ form.select('accrual_periodicity', label=_('Wijzigingsfrequentie'), id='field-accrual_periodicity', selected=data.accrual_periodicity, error=errors.accrual_periodicity, classes=['control-select'], options=h.donl_owms_frequentie()) }}
 
+{{ form.input('version', label=_('Version'), id='field-version', placeholder=_('1.0'), value=data.version, error=errors.version, classes=['control-full', 'control-large']) }}
 
-<h2>{{ _('Wettelijke grondslag data') }}</h2>
-
-{{ form.input('grondslag', label=_('Grondslag'), placeholder=_('vb. http://wetten.overheid.nl/BWBR0123456/'), id='field-grondslag', value=data.grondslag, error=errors.grondslag, classes=['control-full', 'control-large']) }}
-
-{{ form.input('grondslag_citeertitel', label=_('Citeertitel'), placeholder=_('vb. Besluit Geodata Water'), id='field-grondslag_citeertitel', value=data.grondslag_citeertitel, error=errors.grondslag_citeertitel, classes=['control-full', 'control-large']) }}
-
-
-<h2>{{ _('Datakwaliteit') }}</h2>
+{{ form.input('version_notes', label=_('Versietoelichting'), id='field-version_notes', value=data.version_notes, error=errors.version_notes, classes=['control-full', 'control-large']) }}
 
 {{ form.select('lod_stars', label=_('Linked data sterren'), id='field-lod_stars', selected=data.lod_stars, error=errors.lod_stars, classes=['control-full', 'control-large'], options=h.donl_lod_stars()) }}
 
 {{ form.input('conforms_to', label=_('Gebruikte standaarden'), placeholder=_('vb. JuriConnect'), id='field-conforms_to', value=data.conforms_to, error=errors.conforms_to, classes=['control-full', 'control-large']) }}
 
+{% set show_high_value_dataset_selector = True %}
+{% if show_high_value_dataset_selector %}
+  <div class="control-group control-select">
+    <label for="field-high_value_dataset" class="control-label">{{ _('High value dataset') }}</label>
+    <div class="controls">
+      <select id="field-high_value_dataset" name="high_value_dataset">
+        {% for option in [('True', _('Ja')), ('False', _('Nee'))] %}
+        <option value="{{ option[0] }}" {% if data.high_value_dataset is defined  %} {% if option[0] == data.high_value_dataset|trim %} selected="selected"{% endif %}{% else %} {% if option[0] == 'False' %} selected="selected"{% endif %}{%endif%}>{{ option[1] }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+{% endif %}
 
-<h2>{{ _('Rechten') }}</h2>
+
+<h2>{{ _('F. Aanwijzingen voor hergebruik') }}</h2>
+
+{{ form.select('accessibility', label=_('Toegang'), id='field-accessibility', selected='http://data.overheid.nl/acessrights/publiek', error=errors.accessibility, classes=['control-select'], options=h.donl_accessibility()) }}
+
+{{ form.markdown('access_restrictions_reuse', label=_('Aanwijzingen voor hergebruik'), id='field-access_restrictions_reuse', value=data.access_restrictions_reuse, error=errors.access_restrictions_reuse) }}
+
+{# form.input('features', label=_('Kenmerken'), id='field-features', value=data.features, error=errors.features, classes=['control-full', 'control-large']) #}
+
+
+{#
+Lijst met kenmerken die opgehaald worden vanuit de Drupal taxonomy (get_drupal_taxonomie uit de Helpers)
+
+h.displayNameToSystemName vervangt een spatie met een _ en maakt alles lowercase
+|safe zelf tegen de Jinja engine dat dit een safe item is en dus niet ge-html-escaped te worden.
+#}
+
+{% set kenmerken = h.get_drupal_taxonomie("kenmerken") %}
+<!--
+<div class='control-group control-full kenmerken-group'>
+<label class="control-label" for="features">Kenmerken</label>
+</div>
+-->
+{% for kenmerk in kenmerken %}
+    <div class='control-group control-full kenmerken-group-desc' >
+        {% if loop.first %}
+        <label class="control-label" for="features">Kenmerken</label>
+        {% endif %}
+        <div class='controls'>
+            <div class='title'>{{ kenmerk.name }}</div>
+            <div class='desc'>{{ kenmerk.description|safe }}</div>
+        </div>
+    </div>
+    <div class='kenmerken-group-boxes' >
+    {% for option in kenmerk.children %}
+        {% set inputID = 'field-features' + h.displayNameToSystemName( option.name ) %}
+        {% if h.displayNameToSystemName( option.name ) in data.features %}
+            {% set check = True %}
+        {% else %}
+            {% set check = False %}
+        {% endif %}      
+        {{ form.checkbox( 'features', label=option.name, value=h.displayNameToSystemName( option.name ), id=inputID, checked=check, attrs={"title": option.description } ) }}
+    {% endfor %}
+    </div>
+{% endfor %}
+
+<style type="text/css" media="all">
+    .kenmerken-group-desc .title { font-weight:bold; border-bottom: 2px solid #01689b; }
+    .kenmerken-group-desc .desc  { font-size:0.9em; }
+    .kenmerken-group-boxes label  { font-size:1em; font-weight:normal; }
+    
+    .form-horizontal .control-group.kenmerken-group-desc { padding-bottom : 0px; }
+    .kenmerken-group-desc p { margin-bottom : 5px; }
+    
+    .kenmerken-group-boxes .control-group { padding-top:0px; padding-bottom:0px;  }
+</style>
+
+
+<h2>{{ _('G. Relaties, context en samenhang') }}</h2>
+
+{{ form.input('grondslag', label=_('Grondslag'), placeholder=_('vb. http://wetten.overheid.nl/BWBR0123456/'), id='field-grondslag', value=data.grondslag, error=errors.grondslag, classes=['control-full', 'control-large']) }}
+
+{{ form.input('grondslag_citeertitel', label=_('Citeertitel'), placeholder=_('vb. Besluit Geodata Water'), id='field-grondslag_citeertitel', value=data.grondslag_citeertitel, error=errors.grondslag_citeertitel, classes=['control-full', 'control-large']) }}
+
+{{ form.input('md_uri', label=_('Metadata URI'), id='field-md_uri', placeholder=_('vb. http://example.com/dataset.json'), value=data.md_uri, error=errors.md_uri, classes=['control-full', 'control-large']) }}
 
 {{ form.input('rights', label=_('Van toepassing zijnde rechten'), id='field-rights', placeholder=_('vb. CC-BY bronvermelding'), value=data.rights, error=errors.rights, classes=['control-full', 'control-large']) }}
 
+{{ form.input('landingpage', label=_('Meer informatie'), placeholder=_('vb. http://opendata.rijksbegroting.nl/'), id='field-landingpage', value=data.landingpage, error=errors.landingpage, classes=['control-full', 'control-large'], type='url') }}

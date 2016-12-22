@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block form %}
-  {% snippet 'package/snippets/resource_form.html', data=data, errors=errors, error_summary=error_summary, include_metadata=false, pkg_name=pkg_name, stage=stage, allow_upload=g.ofs_impl and logged_in %}
+  {% snippet 'package/snippets/resource_form.html', data=data, errors=errors, error_summary=error_summary, include_metadata=false, pkg=pkg, pkg_name=pkg_name, stage=stage, allow_upload=g.ofs_impl and logged_in %}
 {% endblock %}
 
 {% block content_primary_nav %}

@@ -1,3 +1,4 @@
+<!-- package\resource_read.html -->
 {% extends "package/base.html" %}
 
 {% set res = c.resource %}
@@ -67,7 +68,7 @@
                             {% block resource_item_title %}
                             <a class="heading" href="{{ url }}" title="{{ res.name or res.description }}">
                                 {{ h.resource_display_name(res) | truncate(50) }}
-                                {{ h.popular('views', res.tracking_summary.total, min=10) }}
+                                {# h.popular('views', res.tracking_summary.total, min=10) #}
                             </a>
                             {% endblock %}
                             <p class="description">
@@ -77,12 +78,11 @@
                             </p>
 
                             <div class="header-melding">
-                                {% if h.koop_theme_is_format_downloadable(res.format) %}
-                                <a href="{{ res.url }}" class="resource-url-analytics" target="_blank"> download
-                                    bestand</a>
+                                {% if h.koop_theme_is_resource_downloadable(res.format) %}
+                                    <a href="{{ res.url }}" class="resource-url-analytics" target="_blank"> download bestand</a>
                                 {% else %}
-                                <span class="webservice">Let op dit is een webservice!</span>
-                                <a href="/webservice?link={{ res.url }}" class="webservice2">Klik hier voor meer informatie</a>
+                                    <span class="webservice">Let op dit is een webservice!</span>
+                                    <a href="/webservice?link={{ res.url }}" class="webservice2">Klik hier voor meer informatie</a>
                                 {% endif %}
                             </div>
                         </div>
@@ -91,11 +91,25 @@
                         {% if res.url %}
                         <div class="resource-row">
                             <span class="resource-label">Toegangslink:</span>
-                            {% if h.koop_theme_is_format_downloadable(res.format) %}
-                            <a href="{{ res.url }}">{{ res.url }}</a>
+                                {% if res.orginal_url %}
+                                    <a href="{{ res.orginal_url }}">{{ res.orginal_url }}</a>
+                                {%  else %}
+                                    <a href="{{ res.url }}">{{ res.url }}</a>
+                                {% endif %}
+{#                            {% if h.koop_theme_is_resource_downloadable(res.format) %}
+                                {% if res.orginal_url %}
+                                    <a href="{{ res.orginal_url }}">{{ res.orginal_url }}</a>
+                                {%  else %}
+                                    <a href="{{ res.url }}">{{ res.url }}</a>
+                                {% endif %}
+                                
                             {% else %}
-                            {{ res.url }}
-                            {% endif %}
+                                {% if res.orginal_url %}
+                                    {{ res.orginal_url }}
+                                {%  else %}
+                                    {{ res.url }}
+                                {% endif %}
+                            {% endif %}#}
                         </div>
                         {% endif %}
 
@@ -137,10 +151,6 @@
 {% if res %}
 <section class="module">
     <div class="module-content">
-        {% block data_preview %}
-            {{ h.resource_preview(c.resource, c.package) }}
-        {% endblock %}
-
         <h2>{{ _('Additional Information') }}</h2>
         <table class="table table-striped table-bordered table-condensed" data-module="table-toggle-more">
             <thead>
@@ -209,9 +219,13 @@
 {% snippet "snippets/license.html", pkg_dict=pkg %}
 {% endblock %}
 
-{% block package_identifier %}
-{% snippet "package/snippets/identifier.html", pkg=pkg %}
+   
+{% block package_feedback %}
+{% snippet "package/snippets/feedback.html", pkg=pkg %}
 {% endblock %}
+
+
 
 {% endblock %}
 
+<!-- // package\resource_read.html -->

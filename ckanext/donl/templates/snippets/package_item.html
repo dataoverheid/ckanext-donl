@@ -30,12 +30,13 @@ Example:
 
       <a href="{{ h.url_for(controller='package', action='read', id=package.name) }}" >
         <h2>{{ h.truncate(title, truncate_title) }}</h2>
-
         {% if package.theme and h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[package.theme] %}
           {% set theme = h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[package.theme].split(' | ') %}
           {% set theme = theme[0]|replace(" ", "_") %}
           {% set theme = theme.lower() %}
           <div class="theme {{ theme }}">{{ h.donl_sel_to_dict(h.donl_owms_taxonomie_beleidsagenda())[package.theme] }}</div>
+        {% else %}
+            <div class="theme unkown">Onbekend</div>
         {% endif %}
 
         {#

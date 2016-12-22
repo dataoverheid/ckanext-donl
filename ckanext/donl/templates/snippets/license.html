@@ -1,10 +1,20 @@
 {% if pkg_dict.license_id %}
-  {% if not text_only %}
-    <h2>{{ _('License') }}:</h2>
-  {% endif %}
-  <span property="dc:rights">
-    <div class="license-icon {{ pkg_dict.license_title }}">{{ pkg_dict.license_title }}</div>
-  </span>
+    {% if not text_only %}
+        <h2>{{ _('Hergebruik') }}:</h2>
+    {% endif %}
+    <div class='license-container'>
+        <span property="dc:rights">
+            Licentie: <div class="license-icon {{ pkg_dict.license_title }}"></div> {{ pkg_dict.license_title }}
+        </span>
+    </div>
+    
+    {% if pkg_dict.accessibility %}
+        <br>
+        {{ _("Toegang") }}: {{ h.donl_sel_to_dict(h.donl_accessibility())[pkg_dict.accessibility] or pkg_dict.accessibility}}
+    {% endif %}
+
 {% elif text_only %}
-  {{ _('No License Provided') }}
+
+    {{ _('No License Provided') }}
+
 {% endif %}

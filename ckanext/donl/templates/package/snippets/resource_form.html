@@ -2,9 +2,12 @@
 
 {% set data = data or {} %}
 {% set errors = errors or {} %}
+{% set pkg = pkg or {} %}
 {% set action = form_action or h.url_for(controller='package', action='new_resource', id=pkg_name) %}
 
-<form class="dataset-form dataset-resource-form form-horizontal" method="post" action="{{ action }}" data-module="basic-form resource-form" enctype="multipart/form-data">
+{% set uploads_allowed = (data.id and h.check_access('resource_update_upload', {'id': data.id })) or (pkg.id and h.check_access('resource_create_upload', {'package_id': pkg.id }))  or (h.check_access('resource_create_upload', { 'is_draft': True }))%}
+
+<form id="resource-edit" class="dataset-form dataset-resource-form form-horizontal" method="post" action="{{ action }}" data-module="basic-form resource-form" enctype="multipart/form-data">
   {% block stages %}
     {# An empty stages variable will not show the stages #}
     {% if stage %}
@@ -12,23 +15,48 @@
     {% endif %}
   {% endblock %}
 
-  {{ form.errors(error_summary) }}
+  {% block errors %}{{ form.errors(error_summary) }}{% endblock %}
 
   <input name="id" value="{{ data.id }}" type="hidden"/>
 
-<h2>{{ _('Distributie toevoegen') }}</h2>
+<h2>{{ _('C. Verplichte velden databron') }}</h2>
 
-{{ form.input('name', id='field-name', label=_('Name'), placeholder=_('vb. Rijksbegroting 2013'), value=data.name, error=errors.name, classes=['control-full']) }}
+	{{ form.input('name', id='field-name', label=_('Name'), placeholder=_('vb. Rijksbegroting 2013'), value=data.name, error=errors.name, classes=['control-full'], is_required=true) }}
 
-{{ form.input('url', label=_('Toegangslink'), placeholder=_('vb. http://opendata.rijksbegroting.nl/'), id='field-download_url', value=data.url, error=errors.url, classes=['control-medium'], type='url', is_required=true) }}
+	{# form.input('url', label=_('Toegangslink'), placeholder=_('vb. http://opendata.rijksbegroting.nl/'), id='field-download_url', value=data.url, error=errors.url, classes=['control-medium'], type='url', is_required=true) #}
+    
+  {% block basic_fields_url %}
+    {% set is_upload = (data.url_type == 'upload') %}
+    {{ form.image_upload(data, errors, field_url='url', field_upload='upload', field_clear='clear_upload',
+       is_upload_enabled=h.uploads_enabled() and uploads_allowed, is_url=data.url and not is_upload, is_upload=is_upload,
+       upload_label=_('Bestand'), url_label=_('Toegangslink'), is_required=true) }}
+  {% endblock %}
 
-  {{ form.input('download_url', label=_('Downloadlink'), placeholder=_('vb. http://opendata.rijksbegroting.nl/bestand.xml'), id='field-download_url', value=data.download_url, error=errors.download_url, classes=['control-medium'], type='url') }}
 
-  {{ form.select('format', label=_('Dataformaat'), id='field-format', selected=data.format, error=errors.format, classes=['control-medium'], options=h.donl_distribution_format()) }}
+{# 
+ Dirty fix for the value not being stored, this goes though a lookup.....
+#}
 
+{% set exists = [] %}
+{% if data.format %}
+    {% for format in h.donl_distribution_format() %}
+    	{% if format.text.lower() == data.format.lower() %}
+    		{% do exists.append(format.value) %}
+    	{% endif %}
+    {% endfor %}
+{% endif %}
+
+{{ form.select('format', label=_('Dataformaat'), id='field-format', selected=exists[0], error=errors.format, classes=['control-medium'], options=h.donl_distribution_format(), is_required=true) }}
+    
+
+<h2>{{ _('C. Optionele velden databron') }}</h2>
+
+  {{ form.input('download_url', label=_('Extra link'), placeholder=_('vb. http://opendata.rijksbegroting.nl/bestand.xml'), id='field-download_url', value=data.download_url, error=errors.download_url, classes=['control-medium'], type='url') }}
+  
   {{ form.input('bytesize', label=_('Grootte bestand'), placeholder=_('vb. 1,2 MB'), id='field-bytesize', value=data.bytesize, error=errors.bytesize, classes=['control-medium']) }}
 
   {{ form.markdown('description', id='field-description', label=_('Omschrijving'), placeholder=_('Nuttige informatie over de distributie'), value=data.description, error=errors.description) }}
+
 
   <div class="form-actions">
     {% block delete_button %}
@@ -42,13 +70,17 @@
     {% if stage %}
       {% block previous_button %}
         <button class="btn" name="save" value="go-dataset" type="submit">{{ _('Previous') }}</button>
-      {% endblock %} 
-      <button class="btn btn-primary" name="save" value="go-metadata" type="submit">{% block save_button_text %}{{ _('Next: Additional Info') }}{% endblock %}</button>
+      {% endblock %}
       {% block again_button %}
         <button class="btn" name="save" value="again" type="submit">{{ _('Save & add another') }}</button>
+        {% endblock %}
+      {% block save_button %}
+      <button class="btn btn-primary" name="save" value="go-metadata" type="submit">{% block save_button_text %}{{ _('Opslaan en dataset bekijken') }}{% endblock %}</button>
       {% endblock %}
     {% else %}
+      {% block add_button %}
       <button class="btn btn-primary" name="save" value="go-dataset-complete" type="submit">{{ _('Add') }}</button>
+      {% endblock %}
     {% endif %}
   </div>
 </form>

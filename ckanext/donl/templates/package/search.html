@@ -16,7 +16,7 @@
 {% block primary_content %}
   <h1 class="margin-left">Datasets</h1>
   
-  <div class="module">
+  <section class="module">
     <div class="module-content">
       {% block form %}
        {% set facets = {
@@ -33,7 +33,7 @@
           (_('Last Modified'), 'modified desc, metadata_modified desc'),
           (_('Popular'), 'views_recent desc') if g.tracking_enabled else (false, false) ]
         %}
-        {% snippet 'snippets/search_form.html', type='dataset', query=c.q, sorting=sorting, sorting_selected=c.sort_by_selected, count=c.page.item_count, facets=facets, show_empty=request.params, error=c.query_error %}
+        {% snippet 'snippets/search_form.html', form_id='dataset-search-form', type='dataset', query=c.q, sorting=sorting, sorting_selected=c.sort_by_selected, count=c.page.item_count, facets=facets, show_empty=request.params, error=c.query_error, fields=c.fields %}
       {% endblock %}
       {% block package_search_results_list %}
         {{ h.snippet('snippets/package_list.html', packages=c.page.items) }}
@@ -43,14 +43,26 @@
     {% block page_pagination %}
       {{ c.page.pager(q=c.q) }}
     {% endblock %}
-  </div>
+  </section>
+
+  {% block package_search_results_datarequest %}
+    <section class="module">
+      <div class="module-content">
+        <div class="content search-footer">
+          Niet de data gevonden die u zocht?<br/>
+          Doe een dataverzoek op data.overheid.nl om de data aan te vragen: <a href="/node/add/dataverzoek">dataverzoek formulier</a>
+        </div>
+      </div>
+    </section>
+  {% endblock %}
 
   {% block package_search_results_api %}
-  <div class="module">
+  <section class="module">
     <div class="module-content">
+      {% block package_search_results_api_inner %}
       <small>
         {% set api_link = h.link_to(_('API'), h.url_for(controller='api', action='get_api', ver=3)) %}
-        {% set api_doc_link = h.link_to(_('API Docs'), 'http://docs.ckan.org/en/{0}/api.html'.format(g.ckan_doc_version)) %}
+        {% set api_doc_link = h.link_to(_('API Docs'), 'http://docs.ckan.org/en/{0}/api/'.format(g.ckan_doc_version)) %}
         {% if g.dumps_url -%}
           {% set dump_link = h.link_to(_('full {format} dump').format(format=g.dumps_format), g.dumps_url) %}
           {% trans %}
@@ -62,8 +74,9 @@
           {% endtrans %}
         {%- endif %}
       </small>
+      {% endblock %}
     </div>
-  </div>
+  </section>
   {% endblock %}
 {% endblock %}
 

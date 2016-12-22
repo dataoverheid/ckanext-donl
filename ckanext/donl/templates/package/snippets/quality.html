@@ -1,0 +1,6 @@
+{% if pkg %}
+<h2>Dataset kwaliteit:</h2>
+<div class="dataset-qualtiy">
+    {{ h.drupal_get_dataset_quality('dataset', pkg.id)|safe }}
+</div>
+{% endif %}

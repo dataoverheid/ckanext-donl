@@ -3,11 +3,11 @@
 
 {# This provides a full page that renders a form for adding a dataset. It can
 then itself be extended to add/remove blocks of functionality. #}
-<form class="dataset-form form-horizontal" method="post" action="{{ action }}" data-module="basic-form">
+<form id="dataset-edit" class="dataset-form form-horizontal" method="post" action="{{ action }}" data-module="basic-form">
   {% block stages %}
     {{ h.snippet('package/snippets/stages.html', stages=stage) }}
   {% endblock %}
-
+  
   <input type="hidden" name="_ckan_phase" value="dataset_new_1" />
   {# pkg_name used in 3 stage edit #}
   <input type="hidden" name="pkg_name" value="{{ data.id }}" />
@@ -15,22 +15,38 @@ then itself be extended to add/remove blocks of functionality. #}
 
   {% block basic_fields %}
     {% snippet 'package/snippets/package_basic_fields.html', data=data, errors=errors, licenses=c.licenses, groups_available=c.groups_available %}
+
+    <div>
+      <br/>
+      {{ form.required_message() }}
+    </div>
+  {% endblock %}
+  
+  {% block donl_form_actions %}
+    <div class="form-actions">
+      {% block donl_disclaimer %}
+        <p class="action-info">
+          {%- trans -%}
+          U heeft nu de verplichte velden ingevuld. U kunt nu direct databronnen toevoegen of in onderstaande velden meer informatie invullen over de dataset en daarna de databron(nen) toevoegen.
+          {%- endtrans -%}
+        </p>
+      {% endblock %}
+      {{ self.delete_button() }}
+      {{ self.save_button() }}
+    </div>
+    <hr />
   {% endblock %}
 
   {% block metadata_fields %}
-    {% snippet 'package/snippets/package_metadata_fields.html', data=data, errors=errors, licenses=c.licenses %}
+    {% snippet 'package/snippets/package_metadata_fields.html', data=data, errors=errors %}
   {% endblock %}
-
-  {{ form.required_message() }}
 
   {% block form_actions %}
     <div class="form-actions">
       {% block disclaimer %}
-        <p class="action-info small">
+        <p class="action-info">
           {%- trans -%}
-          Important: By submitting content, you
-          agree to release your contributions under the Open Database
-          License.
+          U heeft nu alle velden ingevuld, en kunt nu de databron(nen) toevoegen.
           {%- endtrans -%}
         </p>
       {% endblock %}
@@ -40,7 +56,9 @@ then itself be extended to add/remove blocks of functionality. #}
           <a class="btn btn-danger pull-left" href="{% url_for controller='package', action='delete', id=data.id %}" data-module="confirm-action" data-module-i18n="{{ locale }}">{% block delete_button_text %}{{ _('Delete') }}{% endblock %}</a>
         {% endif %}
       {% endblock %}
-      <button class="btn btn-primary" type="submit" name="save">{% block save_button_text %}{{ _('Next: Add Data') }}{% endblock %}</button>
+      {% block save_button %}
+        <button class="btn btn-primary" type="submit" name="save">{% block save_button_text %}{{ _('Volgende: Databronnen') }}{% endblock %}</button>
+      {% endblock %}
     </div>
   {% endblock %}
 </form>
